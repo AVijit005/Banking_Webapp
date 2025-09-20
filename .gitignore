@@ -1,0 +1,39 @@
+# =========================
+# Python & Virtual Env
+# =========================
+venv/
+ENV/
+env/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+dist/
+build/
+
+# =========================
+# Environment & Config
+# =========================
+.env
+*.ini
+*.cfg
+*.toml
+*.log
+
+# =========================
+# IDE & Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# =========================
+# OS Specific
+# =========================
+.DS_Store
+Thumbs.db

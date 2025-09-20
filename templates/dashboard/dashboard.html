@@ -1,0 +1,68 @@
+<!-- templates/dashboard/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - SecureBank{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h1 class="text-2xl font-bold mb-4">Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <!-- Quick Stats -->
+            <div class="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-600 dark:text-blue-300 text-sm">Total Balance</p>
+                        <p class="text-2xl font-bold text-blue-800 dark:text-blue-100">${{ total_balance|default:"0.00" }}</p>
+                    </div>
+                    <i class="fas fa-wallet text-blue-500 text-3xl"></i>
+                </div>
+            </div>
+            
+            <div class="bg-green-50 dark:bg-green-900 p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-600 dark:text-green-300 text-sm">Active Cards</p>
+                        <p class="text-2xl font-bold text-green-800 dark:text-green-100">{{ active_cards|default:"0" }}</p>
+                    </div>
+                    <i class="fas fa-credit-card text-green-500 text-3xl"></i>
+                </div>
+            </div>
+            
+            <div class="bg-purple-50 dark:bg-purple-900 p-6 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-600 dark:text-purple-300 text-sm">Active Loans</p>
+                        <p class="text-2xl font-bold text-purple-800 dark:text-purple-100">{{ active_loans|default:"0" }}</p>
+                    </div>
+                    <i class="fas fa-hand-holding-usd text-purple-500 text-3xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="mt-8">
+            <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="{% url 'money_transfer' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                    <i class="fas fa-exchange-alt text-2xl mb-2 text-blue-600"></i>
+                    <p class="text-sm">Transfer Money</p>
+                </a>
+                <a href="{% url 'loans' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                    <i class="fas fa-file-invoice-dollar text-2xl mb-2 text-green-600"></i>
+                    <p class="text-sm">Apply for Loan</p>
+                </a>
+                <a href="{% url 'cards' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                    <i class="fas fa-credit-card text-2xl mb-2 text-purple-600"></i>
+                    <p class="text-sm">Manage Cards</p>
+                </a>
+                <a href="{% url 'insurance' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                    <i class="fas fa-shield-alt text-2xl mb-2 text-orange-600"></i>
+                    <p class="text-sm">Insurance</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
