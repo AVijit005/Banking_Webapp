@@ -1,217 +1,319 @@
-<!-- templates/dashboard/customer_dashboard.html -->
 {% extends 'base.html' %}
+{% load humanize %}
 
-{% block title %}Dashboard - SecureBank{% endblock %}
+{% block title %}Customer Dashboard - UltraBank{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Welcome Section -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-            Welcome back, {{ user.first_name }}!
-        </h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-2">
-            Here's your financial overview for today
-        </p>
-    </div>
-
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Total Balance -->
-        <div
-            class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white transform hover:scale-105 transition-all">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-blue-100 text-sm">Total Balance</p>
-                    <p class="text-3xl font-bold mt-2">${{ total_balance|floatformat:2 }}</p>
-                </div>
-                <div class="bg-white/20 rounded-full p-3">
-                    <i class="fas fa-wallet text-2xl"></i>
-                </div>
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center animate-fade-in">
+                <h1 class="text-4xl font-bold mb-4">Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+                <p class="text-xl opacity-90">Manage your finances with ease and security</p>
             </div>
-            <div class="mt-4 flex items-center text-sm">
-                <i class="fas fa-arrow-up mr-1"></i>
-                <span>+12% from last month</span>
-            </div>
-        </div>
-
-        <!-- Active Loans -->
-        <div
-            class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-6 text-white transform hover:scale-105 transition-all">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-purple-100 text-sm">Active Loans</p>
-                    <p class="text-3xl font-bold mt-2">{{ active_loans }}</p>
-                </div>
-                <div class="bg-white/20 rounded-full p-3">
-                    <i class="fas fa-hand-holding-usd text-2xl"></i>
-                </div>
-            </div>
-            <a href="{% url 'loans' %}" class="mt-4 text-sm hover:underline flex items-center">
-                View all loans <i class="fas fa-arrow-right ml-1"></i>
-            </a>
-        </div>
-
-        <!-- Active Cards -->
-        <div
-            class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white transform hover:scale-105 transition-all">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-green-100 text-sm">Active Cards</p>
-                    <p class="text-3xl font-bold mt-2">{{ active_cards }}</p>
-                </div>
-                <div class="bg-white/20 rounded-full p-3">
-                    <i class="fas fa-credit-card text-2xl"></i>
-                </div>
-            </div>
-            <a href="{% url 'cards' %}" class="mt-4 text-sm hover:underline flex items-center">
-                Manage cards <i class="fas fa-arrow-right ml-1"></i>
-            </a>
-        </div>
-
-        <!-- Reward Points -->
-        <div
-            class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-6 text-white transform hover:scale-105 transition-all">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-orange-100 text-sm">Reward Points</p>
-                    <p class="text-3xl font-bold mt-2">2,450</p>
-                </div>
-                <div class="bg-white/20 rounded-full p-3">
-                    <i class="fas fa-gift text-2xl"></i>
-                </div>
-            </div>
-            <a href="{% url 'rewards' %}" class="mt-4 text-sm hover:underline flex items-center">
-                Redeem now <i class="fas fa-arrow-right ml-1"></i>
-            </a>
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="{% url 'money_transfer' %}"
-                class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all">
-                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-2">
-                    <i class="fas fa-exchange-alt text-blue-600 dark:text-blue-300"></i>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Balance Card -->
+            <div class="glass dark:glass-dark rounded-xl p-6 card-hover animate-slide-up">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Balance</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">${{ total_balance|floatformat:2|intcomma }}</p>
+                    </div>
+                    <div class="h-12 w-12 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-wallet text-white text-xl"></i>
+                    </div>
                 </div>
-                <span class="text-sm font-medium">Transfer Money</span>
-            </a>
-
-            <a href="{% url 'qr_payment' %}"
-                class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all">
-                <div
-                    class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-2">
-                    <i class="fas fa-qrcode text-green-600 dark:text-green-300"></i>
+                <div class="mt-4 flex items-center text-sm text-green-600 dark:text-green-400">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    <span>+2.5% from last month</span>
                 </div>
-                <span class="text-sm font-medium">QR Payment</span>
-            </a>
-
-            <a href="{% url 'loan_apply' %}"
-                class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all">
-                <div
-                    class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mb-2">
-                    <i class="fas fa-file-invoice-dollar text-purple-600 dark:text-purple-300"></i>
-                </div>
-                <span class="text-sm font-medium">Apply Loan</span>
-            </a>
-
-            <a href="{% url 'card_apply' %}"
-                class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all">
-                <div
-                    class="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mb-2">
-                    <i class="fas fa-credit-card text-orange-600 dark:text-orange-300"></i>
-                </div>
-                <span class="text-sm font-medium">New Card</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- Recent Transactions and Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Recent Transactions -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-semibold">Recent Transactions</h2>
-                <a href="{% url 'transactions' %}" class="text-primary hover:underline text-sm">View all</a>
             </div>
 
-            <div class="space-y-3">
-                {% for transaction in recent_transactions %}
-                <div
-                    class="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center
-                                    {% if transaction.transaction_type == 'deposit' %}bg-green-100 text-green-600
-                                    {% elif transaction.transaction_type == 'withdrawal' %}bg-red-100 text-red-600
-                                    {% else %}bg-blue-100 text-blue-600{% endif %}">
-                            <i
-                                class="fas fa-{% if transaction.transaction_type == 'deposit' %}arrow-down{% elif transaction.transaction_type == 'withdrawal' %}arrow-up{% else %}exchange-alt{% endif %}"></i>
+            <!-- Rewards Points Card -->
+            <div class="glass dark:glass-dark rounded-xl p-6 card-hover animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Rewards Points</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ rewards.points|intcomma }}</p>
+                    </div>
+                    <div class="h-12 w-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-gem text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm text-yellow-600 dark:text-yellow-400">
+                    <i class="fas fa-star mr-1"></i>
+                    <span>{{ rewards.tier|title }} Tier</span>
+                </div>
+            </div>
+
+            <!-- Active Cards Card -->
+            <div class="glass dark:glass-dark rounded-xl p-6 card-hover animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Active Cards</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ user.cards.count }}</p>
+                    </div>
+                    <div class="h-12 w-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-credit-card text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm text-purple-600 dark:text-purple-400">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    <span>All active</span>
+                </div>
+            </div>
+
+            <!-- Notifications Card -->
+            <div class="glass dark:glass-dark rounded-xl p-6 card-hover animate-slide-up" style="animation-delay: 0.3s;">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Notifications</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ notifications.count }}</p>
+                    </div>
+                    <div class="h-12 w-12 bg-gradient-to-r from-red-400 to-pink-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-bell text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm text-red-600 dark:text-red-400">
+                    <i class="fas fa-exclamation-circle mr-1"></i>
+                    <span>New alerts</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Accounts Overview -->
+                <div class="glass dark:glass-dark rounded-xl p-6 animate-slide-up">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Your Accounts</h2>
+                        <a href="#" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">
+                            View All <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                    <div class="space-y-4">
+                        {% for account in accounts %}
+                        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-university text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900 dark:text-white">{{ account.get_account_type_display }}</h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">****{{ account.account_number|slice:"-4:" }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900 dark:text-white">${{ account.balance|floatformat:2|intcomma }}</p>
+                                    <p class="text-sm text-green-600 dark:text-green-400">{{ account.status|title }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-8">
+                            <i class="fas fa-wallet text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No accounts found</p>
+                            <a href="#" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">
+                                Open your first account
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="glass dark:glass-dark rounded-xl p-6 animate-slide-up">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Recent Transactions</h2>
+                        <a href="/transactions/" class="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">
+                            View All <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                    <div class="space-y-4">
+                        {% for transaction in recent_transactions %}
+                        <div class="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
+                            <div class="flex items-center space-x-4">
+                                <div class="h-10 w-10 bg-gradient-to-r 
+                                    {% if transaction.transaction_type == 'deposit' %}from-green-400 to-blue-500
+                                    {% elif transaction.transaction_type == 'withdrawal' %}from-red-400 to-pink-500
+                                    {% elif transaction.transaction_type == 'transfer' %}from-purple-400 to-indigo-500
+                                    {% else %}from-gray-400 to-gray-500{% endif %} 
+                                    rounded-lg flex items-center justify-center">
+                                    <i class="fas 
+                                        {% if transaction.transaction_type == 'deposit' %}fa-arrow-down
+                                        {% elif transaction.transaction_type == 'withdrawal' %}fa-arrow-up
+                                        {% elif transaction.transaction_type == 'transfer' %}fa-exchange-alt
+                                        {% else %}fa-receipt{% endif %} 
+                                        text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">{{ transaction.get_transaction_type_display }}</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ transaction.timestamp|date:"M d, Y H:i" }}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold 
+                                    {% if transaction.transaction_type == 'deposit' %}text-green-600 dark:text-green-400
+                                    {% elif transaction.transaction_type == 'withdrawal' %}text-red-600 dark:text-red-400
+                                    {% else %}text-gray-900 dark:text-white{% endif %}">
+                                    {% if transaction.transaction_type == 'deposit' %}+{% elif transaction.transaction_type == 'withdrawal' %}-{% endif %}
+                                    ${{ transaction.amount|floatformat:2|intcomma }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ transaction.status|title }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-8">
+                            <i class="fas fa-exchange-alt text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 dark:text-gray-400">No recent transactions</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-8">
+                <!-- Quick Actions -->
+                <div class="glass dark:glass-dark rounded-xl p-6 animate-slide-up">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
+                    <div class="space-y-3">
+                        <a href="/transactions/transfer/" class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 ripple">
+                            <i class="fas fa-exchange-alt mr-2"></i>
+                            Transfer Money
+                        </a>
+                        <a href="/transactions/qr/generate/" class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105 ripple">
+                            <i class="fas fa-qrcode mr-2"></i>
+                            Generate QR Payment
+                        </a>
+                        <a href="#" class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 transform hover:scale-105 ripple">
+                            <i class="fas fa-hand-holding-usd mr-2"></i>
+                            Apply for Loan
+                        </a>
+                        <a href="#" class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-700 hover:to-red-700 transition-all duration-200 transform hover:scale-105 ripple">
+                            <i class="fas fa-credit-card mr-2"></i>
+                            Apply for Card
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="glass dark:glass-dark rounded-xl p-6 animate-slide-up">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Notifications</h2>
+                    <div class="space-y-4">
+                        {% for notification in notifications %}
+                        <div class="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas 
+                                        {% if notification.notification_type == 'transaction' %}fa-exchange-alt
+                                        {% elif notification.notification_type == 'loan' %}fa-hand-holding-usd
+                                        {% elif notification.notification_type == 'card' %}fa-credit-card
+                                        {% elif notification.notification_type == 'insurance' %}fa-shield-alt
+                                        {% elif notification.notification_type == 'reward' %}fa-gem
+                                        {% else %}fa-info-circle{% endif %} 
+                                        text-blue-500"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ notification.title }}</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ notification.message }}</p>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">{{ notification.created_at|timesince }} ago</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-bell-slash text-2xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">No notifications</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Financial Health -->
+                <div class="glass dark:glass-dark rounded-xl p-6 animate-slide-up">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Financial Health</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600 dark:text-gray-400">Savings Rate</span>
+                                <span class="text-gray-900 dark:text-white font-medium">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
                         </div>
                         <div>
-                            <p class="font-medium">{{ transaction.description|default:transaction.transaction_type|title
-                                }}</p>
-                            <p class="text-sm text-gray-500">{{ transaction.timestamp|date:"M d, Y" }}</p>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600 dark:text-gray-400">Credit Score</span>
+                                <span class="text-gray-900 dark:text-white font-medium">Excellent</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600 dark:text-gray-400">Investment Growth</span>
+                                <span class="text-gray-900 dark:text-white font-medium">+12.5%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p
-                            class="font-semibold {% if transaction.transaction_type == 'deposit' %}text-green-600{% else %}text-red-600{% endif %}">
-                            {% if transaction.transaction_type == 'deposit' %}+{% else %}-{% endif %}${{
-                            transaction.amount|floatformat:2 }}
-                        </p>
-                        <p class="text-xs text-gray-500">{{ transaction.status|title }}</p>
-                    </div>
                 </div>
-                {% empty %}
-                <p class="text-gray-500 text-center py-4">No recent transactions</p>
-                {% endfor %}
             </div>
-        </div>
-
-        <!-- Spending Analytics -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <h2 class="text-xl font-semibold mb-4">Spending Analytics</h2>
-            <canvas id="spendingChart" class="w-full" height="300"></canvas>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-    // Spending Chart
-    const ctx = document.getElementById('spendingChart').getContext('2d');
-    const spendingChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Food & Dining', 'Shopping', 'Transport', 'Bills', 'Others'],
-            datasets: [{
-                data: [30, 25, 15, 20, 10],
-                backgroundColor: [
-                    '#3b82f6',
-                    '#8b5cf6',
-                    '#10b981',
-                    '#f59e0b',
-                    '#ef4444'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 15,
-                        font: {
-                            size: 12
-                        }
-                    }
-                }
-            }
+    // Animate counters on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate balance counter
+        const balanceElement = document.querySelector('[data-balance]');
+        if (balanceElement) {
+            const targetBalance = parseFloat(balanceElement.dataset.balance);
+            animateCounter(balanceElement, 0, targetBalance, 2000);
+        }
+        
+        // Animate rewards counter
+        const rewardsElement = document.querySelector('[data-rewards]');
+        if (rewardsElement) {
+            const targetRewards = parseInt(rewardsElement.dataset.rewards);
+            animateCounter(rewardsElement, 0, targetRewards, 1500);
         }
     });
+    
+    function animateCounter(element, start, end, duration) {
+        const startTime = performance.now();
+        const updateCounter = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const current = start + (end - start) * progress;
+            
+            element.textContent = '$' + current.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            }
+        };
+        requestAnimationFrame(updateCounter);
+    }
 </script>
 {% endblock %}

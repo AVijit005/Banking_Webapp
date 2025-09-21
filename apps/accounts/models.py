@@ -91,6 +91,43 @@ class BankAccount(models.Model):
     def __str__(self):
         return f"{self.account_number} - {self.user.get_full_name()}"
 
+class Rewards(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rewards')
+    points = models.IntegerField(default=0)
+    points_earned = models.IntegerField(default=0)
+    points_redeemed = models.IntegerField(default=0)
+    tier = models.CharField(max_length=20, default='bronze')
+    last_updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'rewards'
+    
+    def __str__(self):
+        return f"{self.user.get_full_name()} - {self.points} points"
+
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('transaction', 'Transaction Alert'),
+        ('loan', 'Loan Update'),
+        ('card', 'Card Activity'),
+        ('insurance', 'Insurance Update'),
+        ('reward', 'Reward Update'),
+        ('system', 'System Notification'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES)
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    is_important = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        db_table = 'notifications'
+        ordering = ['-created_at']
+
 class AuditLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     action = models.CharField(max_length=200)

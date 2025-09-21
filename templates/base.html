@@ -1,13 +1,10 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
-<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }"
-    x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))" :class="{ 'dark': darkMode }">
-
+<html lang="en" class="{% if user.theme_preference == 'dark' %}dark{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SecureBank - Modern Digital Banking{% endblock %}</title>
-
+    <title>{% block title %}UltraBank - Digital Banking Platform{% endblock %}</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,214 +12,363 @@
             darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        primary: '#6366f1',
-                        secondary: '#8b5cf6',
-                        accent: '#f59e0b',
-                    },
                     animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                        'scale-in': 'scaleIn 0.2s ease-out',
+                        'bounce-gentle': 'bounceGentle 0.6s ease-in-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 3s linear infinite',
                         'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.9)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                        bounceGentle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
                     }
                 }
             }
         }
     </script>
-
-    <!-- Alpine.js -->
+    
+    <!-- Alpine.js for interactivity -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- Chart.js -->
+    
+    <!-- Chart.js for analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Icons -->
+    
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Custom CSS -->
+    
+    <!-- Custom CSS for glassmorphism effects -->
     <style>
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
-        }
-
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .glass-effect {
+        .glass {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        .transition-all {
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-bg-alt {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .gradient-bg-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .gradient-bg-warning {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .card-hover {
             transition: all 0.3s ease;
         }
-
-        /* Dark mode styles */
-        .dark .glass-effect {
-            background: rgba(0, 0, 0, 0.3);
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .dark .glass {
+            background: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
-
+    
     {% block extra_css %}{% endblock %}
 </head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300" x-data="{ 
+    darkMode: localStorage.getItem('darkMode') === 'true' || {% if user.theme_preference == 'dark' %}true{% else %}false{% endif %},
+    sidebarOpen: false,
+    notifications: [],
+    showToast: false,
+    toastMessage: '',
+    toastType: 'success'
+}">
+    
+    <!-- Toast Notifications -->
+    <div x-show="showToast" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform scale-95"
+         x-transition:enter-end="opacity-100 transform scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 transform scale-100"
+         x-transition:leave-end="opacity-0 transform scale-95"
+         class="fixed top-4 right-4 z-50 max-w-sm w-full">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-4">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i x-show="toastType === 'success'" class="fas fa-check-circle text-green-500"></i>
+                    <i x-show="toastType === 'error'" class="fas fa-exclamation-circle text-red-500"></i>
+                    <i x-show="toastType === 'warning'" class="fas fa-exclamation-triangle text-yellow-500"></i>
+                    <i x-show="toastType === 'info'" class="fas fa-info-circle text-blue-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-900 dark:text-white" x-text="toastMessage"></p>
+                </div>
+                <div class="ml-auto pl-3">
+                    <button @click="showToast = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg sticky top-0 z-50">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
+                <!-- Logo and Brand -->
                 <div class="flex items-center">
-                    <!-- Logo -->
-                    <a href="{% url 'dashboard' %}" class="flex items-center space-x-3">
-                        <div
-                            class="w-10 h-10 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
-                            <i class="fas fa-university text-white"></i>
+                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-university text-white text-sm"></i>
                         </div>
-                        <span
-                            class="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            SecureBank
-                        </span>
-                    </a>
-
-                    <!-- Main Navigation -->
-                    {% if user.is_authenticated %}
-                    <div class="hidden md:ml-10 md:flex md:space-x-8">
-                        <a href="{% url 'dashboard' %}"
-                            class="text-gray-700 dark:text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-all">
-                            <i class="fas fa-home mr-2"></i>Dashboard
-                        </a>
-
-                        {% if user.is_customer %}
-                        <div x-data="{ open: false }" class="relative">
-                            <button @click="open = !open"
-                                class="text-gray-700 dark:text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-all">
-                                <i class="fas fa-wallet mr-2"></i>Banking
-                                <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                            </button>
-                            <div x-show="open" @click.away="open = false"
-                                x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 transform scale-95"
-                                x-transition:enter-end="opacity-100 transform scale-100"
-                                class="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1">
-                                <a href="{% url 'accounts' %}"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    My Accounts
-                                </a>
-                                <a href="{% url 'money_transfer' %}"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    Money Transfer
-                                </a>
-                                <a href="{% url 'qr_payments' %}"
-                                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    QR Payments
-                                </a>
-                            </div>
-                        </div>
-
-                        <a href="{% url 'loans' %}"
-                            class="text-gray-700 dark:text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-all">
-                            <i class="fas fa-hand-holding-usd mr-2"></i>Loans
-                        </a>
-
-                        <a href="{% url 'cards' %}"
-                            class="text-gray-700 dark:text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-all">
-                            <i class="fas fa-credit-card mr-2"></i>Cards
-                        </a>
-
-                        <a href="{% url 'insurance' %}"
-                            class="text-gray-700 dark:text-gray-300 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition-all">
-                            <i class="fas fa-shield-alt mr-2"></i>Insurance
-                        </a>
-                        {% endif %}
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-white">UltraBank</span>
                     </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="{% url 'dashboard' %}" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </a>
+                    {% if user.role == 'customer' %}
+                    <a href="{% url 'accounts:account_list' %}" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-wallet mr-1"></i> Accounts
+                    </a>
+                    <a href="{% url 'transactions:transaction_list' %}" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                        <i class="fas fa-exchange-alt mr-1"></i> Transactions
+                    </a>
                     {% endif %}
                 </div>
 
-                <!-- Right Navigation -->
+                <!-- User Menu -->
                 <div class="flex items-center space-x-4">
                     <!-- Dark Mode Toggle -->
-                    <button @click="darkMode = !darkMode"
-                        class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 transition-all">
-                        <i x-show="!darkMode" class="fas fa-moon text-gray-700"></i>
-                        <i x-show="darkMode" class="fas fa-sun text-yellow-400"></i>
+                    <button @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode); $el.classList.toggle('dark', darkMode); document.documentElement.classList.toggle('dark', darkMode)" 
+                            class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <i x-show="!darkMode" class="fas fa-moon"></i>
+                        <i x-show="darkMode" class="fas fa-sun"></i>
                     </button>
 
-                    {% if user.is_authenticated %}
                     <!-- Notifications -->
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 relative">
-                            <i class="fas fa-bell text-gray-700 dark:text-gray-300"></i>
-                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 relative">
+                            <i class="fas fa-bell"></i>
+                            <span x-show="notifications.length > 0" class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center animate-pulse"></span>
                         </button>
-                    </div>
-
-                    <!-- User Menu -->
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open"
-                            class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-all">
-                            <img src="https://ui-avatars.com/api/?name={{ user.get_full_name }}"
-                                class="w-8 h-8 rounded-full">
-                            <span class="text-sm font-medium">{{ user.first_name }}</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </button>
-
-                        <div x-show="open" @click.away="open = false"
-                            x-transition:enter="transition ease-out duration-200"
-                            class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1">
-                            <a href="{% url 'profile' %}"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                <i class="fas fa-user mr-2"></i>Profile
-                            </a>
-                            <a href="{% url 'settings' %}"
-                                class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                <i class="fas fa-cog mr-2"></i>Settings
-                            </a>
-                            <hr class="my-1 border-gray-200 dark:border-gray-700">
-                            <a href="{% url 'logout' %}"
-                                class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                            </a>
+                        
+                        <!-- Notifications Dropdown -->
+                        <div x-show="open" @click.away="open = false" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                            <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto">
+                                <template x-for="notification in notifications" :key="notification.id">
+                                    <div class="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <p class="text-sm text-gray-900 dark:text-white" x-text="notification.message"></p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" x-text="notification.time"></p>
+                                    </div>
+                                </template>
+                                <div x-show="notifications.length === 0" class="p-4 text-center text-gray-500 dark:text-gray-400">
+                                    No notifications
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    {% else %}
-                    <a href="{% url 'login' %}"
-                        class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all">
-                        Login
-                    </a>
-                    {% endif %}
+
+                    <!-- User Profile Dropdown -->
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center space-x-2 p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <div class="h-8 w-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <span class="hidden md:block text-sm font-medium">{{ user.get_full_name|default:user.username }}</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        
+                        <!-- Profile Dropdown -->
+                        <div x-show="open" @click.away="open = false" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                            <div class="py-1">
+                                <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-user mr-2"></i> Profile
+                                </a>
+                                <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-cog mr-2"></i> Settings
+                                </a>
+                                <div class="border-t border-gray-100 dark:border-gray-700"></div>
+                                <a href="/auth/logout/" class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Sidebar for Mobile -->
+    <div x-show="sidebarOpen" @click="sidebarOpen = false" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 lg:hidden">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 shadow-xl">
+            <div class="p-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-university text-white text-sm"></i>
+                        </div>
+                        <span class="ml-2 text-xl font-bold text-gray-900 dark:text-white">UltraBank</span>
+                    </div>
+                    <button @click="sidebarOpen = false" class="p-2 rounded-md text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="mt-8 space-y-2">
+                    <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                        <i class="fas fa-home mr-2"></i> Dashboard
+                    </a>
+                    {% if user.role == 'customer' %}
+                    <a href="{% url 'accounts:account_list' %}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                        <i class="fas fa-wallet mr-2"></i> Accounts
+                    </a>
+                    <a href="{% url 'transactions:transaction_list' %}" class="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                        <i class="fas fa-exchange-alt mr-2"></i> Transactions
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <main class="min-h-screen">
+        <!-- Messages -->
         {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             {% for message in messages %}
-            <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" class="mb-4 p-4 rounded-lg flex items-center justify-between
-                        {% if message.tags == 'error' %}bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100
-                        {% elif message.tags == 'success' %}bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100
-                        {% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-100
-                        {% else %}bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100{% endif %}">
+            <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 border border-red-400 text-red-700{% elif message.tags == 'warning' %}bg-yellow-100 border border-yellow-400 text-yellow-700{% elif message.tags == 'success' %}bg-green-100 border border-green-400 text-green-700{% else %}bg-blue-100 border border-blue-400 text-blue-700{% endif %} animate-fade-in">
                 <div class="flex items-center">
-                    <i
-                        class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} mr-3"></i>
-                    <span>{{ message }}</span>
+                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% elif message.tags == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                    {{ message }}
                 </div>
-                <button @click="show = false" class="ml-4">
-                    <i class="fas fa-times"></i>
-                </button>
             </div>
             {% endfor %}
         </div>
@@ -232,60 +378,55 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-800 shadow-lg mt-12">
+    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">About SecureBank</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">
-                        Your trusted partner in digital banking, providing secure and innovative financial solutions.
-                    </p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">About Us</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">Contact</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">Privacy Policy</a>
-                        </li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">Terms of Service</a>
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Support</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">Help Center</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">FAQs</a></li>
-                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">Security</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Connect With Us</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div
-                class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-600 dark:text-gray-400">
-                <p>&copy; 2024 SecureBank. All rights reserved.</p>
+            <div class="text-center text-gray-500 dark:text-gray-400">
+                <p>&copy; 2024 UltraBank. All rights reserved. | Secure • Fast • Reliable</p>
             </div>
         </div>
     </footer>
 
+    <!-- JavaScript for enhanced interactivity -->
+    <script>
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            Alpine.store('toast', { message, type, show: true });
+        }
+
+        // Ripple effect for buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('ripple')) {
+                const button = e.target;
+                const ripple = document.createElement('span');
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple-effect');
+                
+                button.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            }
+        });
+
+        // Auto-hide messages
+        setTimeout(() => {
+            const messages = document.querySelectorAll('[class*="bg-"]');
+            messages.forEach(message => {
+                message.style.transition = 'opacity 0.5s ease-out';
+                message.style.opacity = '0';
+                setTimeout(() => message.remove(), 500);
+            });
+        }, 5000);
+    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
-
 </html>

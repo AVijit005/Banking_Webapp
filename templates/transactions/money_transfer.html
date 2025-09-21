@@ -1,1 +1,111 @@
-<!DOCTYPE html><html><body><h1>Money Transfer</h1></body></html> 
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Money Transfer - UltraBank{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-8 animate-fade-in">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">Money Transfer</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400">Send money securely and instantly</p>
+        </div>
+
+        <!-- Transfer Form Card -->
+        <div class="glass dark:glass-dark rounded-2xl shadow-2xl p-8 animate-slide-up">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Form Fields -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- From Account -->
+                    <div>
+                        <label for="{{ form.from_account.id_for_label }}"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            From Account
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-wallet text-gray-400"></i>
+                            </div>
+                            {{ form.from_account }}
+                        </div>
+                        {% if form.from_account.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.from_account.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- To Account -->
+                    <div>
+                        <label for="{{ form.to_account_number.id_for_label }}"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            To Account Number
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            {{ form.to_account_number }}
+                        </div>
+                        {% if form.to_account_number.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.to_account_number.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Amount -->
+                    <div>
+                        <label for="{{ form.amount.id_for_label }}"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Amount
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-dollar-sign text-gray-400"></i>
+                            </div>
+                            {{ form.amount }}
+                        </div>
+                        {% if form.amount.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.amount.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="{{ form.description.id_for_label }}"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Description (Optional)
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-comment text-gray-400"></i>
+                            </div>
+                            {{ form.description }}
+                        </div>
+                        {% if form.description.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ form.description.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button type="submit"
+                        class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 ripple">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Transfer Money
+                    </button>
+
+                    <a href="/dashboard/"
+                        class="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-bold py-3 px-6 rounded-lg transition-all duration-200 text-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

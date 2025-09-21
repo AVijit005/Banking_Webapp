@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.core.urls')),
+    path('', include('apps.core.urls')),  # This will handle the root URL
     path('accounts/', include('apps.accounts.urls')),
     path('transactions/', include('apps.transactions.urls')),
     path('loans/', include('apps.loans.urls')),
