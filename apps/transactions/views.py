@@ -18,11 +18,32 @@ import uuid
 
 @login_required
 def transaction_list(request):
-    """List all transactions for the user"""
+    """List all transactions for the user with search and filtering"""
     transactions = Transaction.objects.filter(
         from_account__user=request.user
     ).order_by('-timestamp')
     
+    # Search and filtering
+    query = request.GET.get('q')
+    transaction_type = request.GET.get('transaction_type')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if query:
+        transactions = transactions.filter(
+            models.Q(description__icontains=query) |
+            models.Q(amount__icontains=query)
+        )
+
+    if transaction_type:
+        transactions = transactions.filter(transaction_type=transaction_type)
+
+    if start_date:
+        transactions = transactions.filter(timestamp__gte=start_date)
+
+    if end_date:
+        transactions = transactions.filter(timestamp__lte=end_date)
+
     # Pagination
     paginator = Paginator(transactions, 20)
     page_number = request.GET.get('page')
@@ -31,6 +52,7 @@ def transaction_list(request):
     context = {
         'transactions': page_obj,
         'total_transactions': transactions.count(),
+        'transaction_types': Transaction.TRANSACTION_TYPES,
     }
     return render(request, 'transactions/transaction_list.html', context)
 

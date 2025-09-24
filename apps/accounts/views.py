@@ -17,6 +17,22 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/profile.html'
 
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.email = request.POST.get('email', user.email)
+        user.phone_number = request.POST.get('phone_number', user.phone_number)
+        user.address = request.POST.get('address', user.address)
+        user.city = request.POST.get('city', user.city)
+        user.state = request.POST.get('state', user.state)
+        user.postal_code = request.POST.get('postal_code', user.postal_code)
+        user.theme_preference = request.POST.get('theme_preference', user.theme_preference)
+        user.save()
+
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('accounts:profile')
+
 class SettingsView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/settings.html'
 
