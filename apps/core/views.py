@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .forms import LoginForm, UserRegistrationForm
 import json
+import json
 
 User = get_user_model()
 
@@ -54,6 +55,7 @@ class DashboardView(TemplateView):
         """Get context data for customer dashboard"""
         from apps.accounts.models import BankAccount, Rewards, Notification
         from apps.transactions.models import Transaction
+        from django.db.models import Sum
         
         accounts = BankAccount.objects.filter(user=user, status='active')
         recent_transactions = Transaction.objects.filter(
@@ -69,12 +71,23 @@ class DashboardView(TemplateView):
             user=user, is_read=False
         ).order_by('-created_at')[:5]
         
+        # Get spending data for the chart
+        spending_by_category = Transaction.objects.filter(
+            from_account__user=user,
+            transaction_type__in=['withdrawal', 'transfer', 'payment']
+        ).values('transaction_type').annotate(total=Sum('amount'))
+
+        chart_labels = [item['transaction_type'] for item in spending_by_category]
+        chart_data = [float(item['total']) for item in spending_by_category]
+
         return {
             'accounts': accounts,
             'recent_transactions': recent_transactions,
             'rewards': rewards,
             'notifications': notifications,
             'total_balance': sum(account.balance for account in accounts),
+            'chart_labels': json.dumps(chart_labels),
+            'chart_data': json.dumps(chart_data),
         }
     
     def get_employee_context(self, user):
@@ -191,28 +204,6 @@ def register_view(request):
     return render(request, 'registration/register.html', {'form': form})
 
 @login_required
-def profile_view(request):
-    """User profile management"""
-    if request.method == 'POST':
-        # Handle profile updates
-        user = request.user
-        user.first_name = request.POST.get('first_name', user.first_name)
-        user.last_name = request.POST.get('last_name', user.last_name)
-        user.email = request.POST.get('email', user.email)
-        user.phone_number = request.POST.get('phone_number', user.phone_number)
-        user.address = request.POST.get('address', user.address)
-        user.city = request.POST.get('city', user.city)
-        user.state = request.POST.get('state', user.state)
-        user.postal_code = request.POST.get('postal_code', user.postal_code)
-        user.theme_preference = request.POST.get('theme_preference', user.theme_preference)
-        user.save()
-        
-        messages.success(request, 'Profile updated successfully!')
-        return redirect('profile')
-    
-    return render(request, 'accounts/profile.html')
-
-@login_required
 def notifications_view(request):
     """Notifications management"""
     from apps.accounts.models import Notification
@@ -242,4 +233,13 @@ def api_health_check(request):
         'timestamp': timezone.now().isoformat(),
         'version': '1.0.0',
     })
-</create_file>
+
+
+class BudgetingView(TemplateView):
+    """Budgeting and financial planning tools"""
+    template_name = 'dashboard/budgeting.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Budgeting Tools'
+        return context

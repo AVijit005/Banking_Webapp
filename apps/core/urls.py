@@ -21,7 +21,6 @@ urlpatterns = [
     path('dashboard/budgeting/', views.BudgetingView.as_view(), name='budgeting'),
     
     # Profile & Settings
-    path('profile/', views.profile_view, name='profile'),
     path('notifications/', views.notifications_view, name='notifications'),
     
     # API Endpoints

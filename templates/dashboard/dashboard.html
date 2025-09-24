@@ -41,23 +41,52 @@
             </div>
         </div>
         
+        <!-- Spending Chart and Recent Transactions -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+            <!-- Spending Chart -->
+            <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Spending by Category</h2>
+                <canvas id="spendingChart"></canvas>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                <h2 class="text-lg font-semibold mb-4">Recent Transactions</h2>
+                <div class="space-y-4">
+                    {% for transaction in recent_transactions %}
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-semibold">{{ transaction.description }}</p>
+                            <p class="text-sm text-gray-500">{{ transaction.timestamp|date:"M d, Y" }}</p>
+                        </div>
+                        <p class="font-bold {% if transaction.amount < 0 %}text-red-500{% else %}text-green-500{% endif %}">
+                            ${{ transaction.amount }}
+                        </p>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500">No recent transactions.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
         <!-- Quick Actions -->
         <div class="mt-8">
             <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <a href="{% url 'money_transfer' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                <a href="{% url 'transactions:money_transfer' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
                     <i class="fas fa-exchange-alt text-2xl mb-2 text-blue-600"></i>
                     <p class="text-sm">Transfer Money</p>
                 </a>
-                <a href="{% url 'loans' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                <a href="{% url 'loans:loan_apply' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
                     <i class="fas fa-file-invoice-dollar text-2xl mb-2 text-green-600"></i>
                     <p class="text-sm">Apply for Loan</p>
                 </a>
-                <a href="{% url 'cards' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                <a href="{% url 'cards:card_apply' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
                     <i class="fas fa-credit-card text-2xl mb-2 text-purple-600"></i>
                     <p class="text-sm">Manage Cards</p>
                 </a>
-                <a href="{% url 'insurance' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                <a href="{% url 'insurance:insurance_apply' %}" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg text-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
                     <i class="fas fa-shield-alt text-2xl mb-2 text-orange-600"></i>
                     <p class="text-sm">Insurance</p>
                 </a>
@@ -65,4 +94,53 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const spendingCtx = document.getElementById('spendingChart').getContext('2d');
+    const spendingChart = new Chart(spendingCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [{
+                label: 'Spending by Category',
+                data: {{ chart_data|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Your Spending Breakdown'
+                }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true
+            }
+        }
+    });
+</script>
 {% endblock %}
